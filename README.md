@@ -2,6 +2,15 @@
 
 tauri-calculator は Tauri、Rust と React で実現した電卓です。
 
+> Stack
+
+- Tauri
+- React18
+- styled-components
+- Rust
+- Vite
+
+
 > 立ち上げ
 
 - dev
