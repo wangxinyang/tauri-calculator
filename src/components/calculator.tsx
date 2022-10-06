@@ -4,6 +4,7 @@ import Panel from './panel'
 import Show from './show'
 
 import { invoke } from '@tauri-apps/api'
+import { IPanelItem } from './panelbutton'
 
 const CalculatorContainer = styled.div``
 
@@ -11,30 +12,34 @@ const CalculatorContainer = styled.div``
  *  Calculator　コンポネート
  */
 const Calculator = () => {
-  const [result, setResult] = useState('0')
-  const [calc, setCalc] = useState<string[]>([])
-  const [ecount, setEcount] = useState(0)
-  // 子コンポネートから渡したの内容に対して処理を行います
+  const [result, setResult] = useState({ value: '0', flag: 'number' })
+  const [calcStacked, setCalcStacked] = useState<string[]>([])
+  const [isCalc, setIsCalc] = useState(false)
+
   const handlePanelClick = (value: string, flag: string): void => {
     switch (flag) {
       case 'number':
-        if (ecount == 1) {
-          setResult(value)
-        } else {
-          if (result !== '' && result !== '0') {
-            setResult(result + value)
+        if (result.value !== '0') {
+          if (isCalc) {
+            setResult({ value, flag })
+            setCalcStacked((prev) => [...prev, value])
           } else {
-            setResult(value)
+            setResult({ value: result.value + value, flag })
+            setCalcStacked([result.value + value])
           }
+        } else {
+          setResult({ value, flag })
+          setCalcStacked([value])
         }
-        setEcount(0)
-        setCalc((prev) => [...prev, value])
+        setIsCalc(false)
         break
       case 'system':
         switch (value) {
           case 'AC':
-            setResult('0')
-            setCalc([])
+            // reset
+            setIsCalc(false)
+            setResult({ value: '0', flag: 'number' })
+            setCalcStacked([])
             break
           case '+/-':
             break
@@ -45,27 +50,20 @@ const Calculator = () => {
         }
         break
       case 'cal':
-        setResult(result + value)
-        setCalc((prev) => [...prev, value])
-        break
-      case 'point':
-        // ポイントがアルの場合、直接リターン
-        if (result.indexOf('.') !== -1) {
-          return
-        }
-        setResult(result + '.')
-        setCalc((prev) => [...prev, value])
+        // 運算子をクリックするとtrueになる
+        setIsCalc(true)
+        setCalcStacked((prev) => [...prev, value])
         break
       case 'count':
-        setEcount(1)
         // 計算
-        let expr = ''
-        while (calc.length) {
-          let value = calc.shift()
-          expr += value
-        }
+        let expr = calcStacked.reduce((prev, cur) => {
+          const returns = prev + cur
+          return returns
+        })
         // call rust method
-        invoke('calc_expr', { expr }).then((response) => setResult(response as string))
+        invoke('calc_expr', { expr }).then((response) =>
+          setResult({ value: response as string, flag: 'number' })
+        )
         break
       default:
         break

@@ -25,7 +25,7 @@ const Button = styled.button`
   cursor: pointer;
 `
 
-type IPanelItem = {
+export type IPanelItem = {
   value: string
   flag: string
 }

@@ -2,8 +2,6 @@
 
 tauri-calculator は Tauri、Rust と React で実現した電卓です。
 
-
-
 > 立ち上げ
 
 - dev
@@ -12,7 +10,11 @@ tauri-calculator は Tauri、Rust と React で実現した電卓です。
 cargo tauri dev
 ```
 
+- build
 
+```
+cargo tauri build
+```
 
 > demo
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { IPanelItem } from './panelbutton'
 
 const ShowContainer = styled.div`
   height: 200px;
@@ -14,7 +15,7 @@ const Result = styled.div`
 `
 
 interface IShow {
-  result: string
+  result: IPanelItem
 }
 /**
  *  Calculator　計算の結果を表示する
@@ -22,7 +23,7 @@ interface IShow {
 const Show = ({ result }: IShow) => {
   return (
     <ShowContainer>
-      <Result>{result}</Result>
+      <Result>{result.value}</Result>
     </ShowContainer>
   )
 }
